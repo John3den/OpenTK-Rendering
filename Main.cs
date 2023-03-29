@@ -1,4 +1,5 @@
-﻿using Engine;
+﻿using Dear_ImGui_Sample;
+using Engine;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
@@ -6,6 +7,7 @@ using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
 using System.Xml.Linq;
+using ImGuiNET;
 
 
 using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Bruh"))
@@ -20,122 +22,107 @@ namespace Simulation
 
     public class Simulation : GameWindow
     {
-        float Yaw = -90;
-        float pitch = 0;
-        float Sensitivity = 0.1f;
+        Engine.Geometry cube = new Engine.Geometry();
+        Engine.Shader shader;
+        Engine.Camera camera = new Engine.Camera();
+        ImGuiController _controller;
         bool firstMove = true;
-        Vector2 lastPos;
-        float speed = 15f;
-        Vector3 position = new Vector3(0.0f, 0.0f, 30.0f);
-        Vector3 front = new Vector3(0.0f, 1.0f, -1.0f);
-        Vector3 up = new Vector3(0.0f, 1.0f, 0.0f);
         int VertexBufferObject;
         int VertexArrayObject;
         int ElementBufferObject;
-        Engine.Shader shader;
-        private readonly float[] vertices =
-          {
-      // positions        // colors
-      0.5f,  0.5f, 0.5f,  1.0f, 0.0f, 0.0f,   // TOP
-     -0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,   //
-      0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f,    // 
-      -0.5f,  0.5f, 0.5f,  1.0f, 0.0f, 0.0f,   // 
-      0.5f,  -0.5f, 0.5f,  0.0f, 0.0f, 1.0f,   // BOTTOM
-     -0.5f,  -.5f, -0.5f,  0.0f, 0.0f, 1.0f,   //
-      0.5f,  -0.5f, -0.5f,  0.0f, 0.0f, 1.0f,    // 
-      -0.5f, -0.5f, 0.5f,  0.0f, 0.0f, 1.0f,   // 
+        float t = 0;
+        int n = 1;
 
-    };
-        uint[] indices = {  
-    0, 2, 1,
-    0, 3, 1,
-
-    4, 5, 7,
-    4, 5, 6,
-
-    0, 2, 6,
-    0, 4, 6,
-
-    1, 3, 7,
-    1, 5, 7,
-
-    1, 5, 6,
-    1, 2, 6,
-
-    3, 0, 4,
-    3, 7, 4
-};
         public Simulation(int width, int height, string title) :
         base(GameWindowSettings.Default, new NativeWindowSettings()
         {
             Size = (width, height),
             Title = title
         }){}
-        protected override void OnResize(ResizeEventArgs e)
+        void ProcessKeyboard(FrameEventArgs e)
         {
-            base.OnResize(e);
-            GL.Viewport(0, 0, e.Width, e.Height);
-        }
-        protected override void OnUpdateFrame(FrameEventArgs e)
-        {
-            base.OnUpdateFrame(e);
-            
             KeyboardState input = KeyboardState;
-
             if (input.IsKeyDown(Keys.Escape))
             {
                 Close();
             }
             if (input.IsKeyDown(Keys.W))
             {
-                position += front * speed * (float)e.Time; //Forward 
+                camera.position += camera.front * camera.speed * (float)e.Time; //Forward 
             }
 
             if (input.IsKeyDown(Keys.S))
             {
-                position -= front * speed * (float)e.Time; //Backwards
+                camera.position -= camera.front * camera.speed * (float)e.Time; //Backwards
             }
 
             if (input.IsKeyDown(Keys.A))
             {
-                position -= Vector3.Normalize(Vector3.Cross(front, up)) * speed * (float)e.Time; //Left
+                camera.position -= Vector3.Normalize(Vector3.Cross(camera.front, camera.up)) * camera.speed * (float)e.Time; //Left
             }
 
             if (input.IsKeyDown(Keys.D))
             {
-                position += Vector3.Normalize(Vector3.Cross(front, up)) * speed * (float)e.Time; //Right
+                camera.position += Vector3.Normalize(Vector3.Cross(camera.front, camera.up)) * camera.speed * (float)e.Time; //Right
             }
 
             if (input.IsKeyDown(Keys.Space))
             {
-                position += up * speed * (float)e.Time; //Up 
+                camera.position += camera.up * camera.speed * (float)e.Time; //Up 
             }
 
             if (input.IsKeyDown(Keys.LeftShift))
             {
-                position -= up * speed * (float)e.Time; //Down
+                camera.position -= camera.up * camera.speed * (float)e.Time; //Down
             }
-            if (firstMove)
-            {
-                lastPos = new Vector2(MousePosition.X, MousePosition.Y);
-                firstMove = false;
-            }
-            else
-            {
-                float deltaX = MousePosition.X - lastPos.X;
-                float deltaY = MousePosition.Y - lastPos.Y;
-                lastPos = new Vector2(MousePosition.X, MousePosition.Y);
+        }
+        protected override void OnResize(ResizeEventArgs e)
+        {
+            base.OnResize(e);
+            GL.Viewport(0, 0, e.Width, e.Height);
+            _controller.WindowResized(ClientSize.X, ClientSize.Y);
+        }
+        protected override void OnUpdateFrame(FrameEventArgs e)
+        {
+            base.OnUpdateFrame(e);
+            ProcessKeyboard(e);
 
-                Yaw += deltaX * Sensitivity;
-                //Camera Clamping
-                if (pitch - deltaY * Sensitivity < 90 && pitch - deltaY * Sensitivity > -90)
-                    pitch -= deltaY * Sensitivity;
-            }
+            if (IsMouseButtonPressed(MouseButton.Right))
+            {
+                if(CursorState == CursorState.Grabbed)
+                    CursorState = CursorState.Normal;
+                else
+                {
 
-            front.X = (float)Math.Cos(MathHelper.DegreesToRadians(pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(Yaw));
-            front.Y = (float)Math.Sin(MathHelper.DegreesToRadians(pitch));
-            front.Z = (float)Math.Cos(MathHelper.DegreesToRadians(pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(Yaw));
-            front = Vector3.Normalize(front);
+                    CursorState = CursorState.Grabbed;
+                }
+
+            }
+           
+            if (CursorState == CursorState.Grabbed)
+            {
+                if (firstMove)
+                {
+                    camera.lastPos = new Vector2(MousePosition.X, MousePosition.Y);
+                    firstMove = false;
+                }
+                else
+                {
+                    float deltaX = MousePosition.X - camera.lastPos.X;
+                    float deltaY = MousePosition.Y - camera.lastPos.Y;
+                    camera.lastPos = new Vector2(MousePosition.X, MousePosition.Y);
+
+                    camera.Yaw += deltaX * camera.Sensitivity;
+                    //Camera Clamping
+                    if (camera.pitch - deltaY * camera.Sensitivity < 90 &&  camera.pitch - deltaY * camera.Sensitivity > -90)
+                        camera.pitch -= deltaY * camera.Sensitivity;
+                }
+
+                camera.front.X = (float)Math.Cos(MathHelper.DegreesToRadians(camera.pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(camera.  Yaw));
+                camera.front.Y = (float)Math.Sin(MathHelper.DegreesToRadians(camera.pitch));
+                camera.front.Z = (float)Math.Cos(MathHelper.DegreesToRadians(camera.pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(camera.Yaw));
+                camera.front = Vector3.Normalize(camera.front);
+            }
         }
     
         protected override void OnUnload()
@@ -148,7 +135,7 @@ namespace Simulation
         protected override void OnLoad()
         {
             base.OnLoad();
-
+            _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
             GL.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
 
             //start logic
@@ -160,12 +147,12 @@ namespace Simulation
             //VBO
             VertexBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ArrayBuffer, VertexBufferObject);
-            GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ArrayBuffer, cube.vertices.Length * sizeof(float), cube.vertices, BufferUsageHint.StaticDraw);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 3 * sizeof(float), 0);
             //EBO
             ElementBufferObject = GL.GenBuffer();
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, ElementBufferObject);
-            GL.BufferData(BufferTarget.ElementArrayBuffer, indices.Length * sizeof(uint), indices, BufferUsageHint.StaticDraw);
+            GL.BufferData(BufferTarget.ElementArrayBuffer, cube.indices.Length * sizeof(uint), cube.indices, BufferUsageHint.StaticDraw);
             GL.EnableVertexAttribArray(0);
             GL.VertexAttribPointer(0, 3, VertexAttribPointerType.Float, false, 6 * sizeof(float), 0);
             GL.EnableVertexAttribArray(0);
@@ -174,7 +161,7 @@ namespace Simulation
             GL.EnableVertexAttribArray(1);
             //end logic
         }
-        float t = 0;
+
         protected override void OnRenderFrame(FrameEventArgs e)
         {
             base.OnRenderFrame(e);
@@ -183,41 +170,67 @@ namespace Simulation
             
 
             //start logic
-            t += 0.5f;
-            Matrix4.CreateOrthographicOffCenter(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 100.0f);
-            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), (float)800 / (float)600, 0.1f, 100.0f);
-            Matrix4 model =Matrix4.CreateScale(5f)*Matrix4.CreateRotationX(MathHelper.DegreesToRadians(0));
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 800 / 600, 0.1f, 100.0f);
+            Matrix4.CreateOrthographicOffCenter(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1000.0f);
+            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
+            Matrix4 model =Matrix4.CreateTranslation(new Vector3(0,0,0));
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 800 / 600, 0.1f, 1000.0f);
 
             Vector3 cameraTarget = Vector3.Zero;
-            Vector3 cameraDirection = Vector3.Normalize(position - cameraTarget);
+            Vector3 cameraDirection = Vector3.Normalize(camera.position - cameraTarget);
             Vector3 up = Vector3.UnitY;
             Vector3 cameraRight = Vector3.Normalize(Vector3.Cross(up, cameraDirection));
             Vector3 cameraUp = Vector3.Cross(cameraDirection, cameraRight);
 
-            Matrix4 view = Matrix4.LookAt(position, position + front, up);
+            Matrix4 view = Matrix4.LookAt(camera.position, camera.position + camera.front, up);
 
             shader.Use();
             //Uniforms
-            int vertexColorLocation = GL.GetUniformLocation(shader.Handle, "ourColor");
-            GL.Uniform4(vertexColorLocation, 0.0f, 1.0f, 0.0f, 1.0f);
-
-            int location = GL.GetUniformLocation(shader.Handle, "model");
+            int location = GL.GetUniformLocation(shader.Handle, "ourColor");
+            GL.Uniform4(location, 0.0f, 1.0f, 0.0f, 1.0f);
+            location = GL.GetUniformLocation(shader.Handle, "camPos");
+            GL.Uniform3(location, camera.position);
+            location = GL.GetUniformLocation(shader.Handle, "model");
             GL.UniformMatrix4(location, true, ref model);
             location = GL.GetUniformLocation(shader.Handle, "view");
             GL.UniformMatrix4(location, true, ref view);
             location = GL.GetUniformLocation(shader.Handle, "projection");
-            GL.UniformMatrix4(location, true, ref projection    );
+            GL.UniformMatrix4(location, true, ref projection);
+
+            location = GL.GetUniformLocation(shader.Handle, "model");
             GL.BindVertexArray(VertexArrayObject);
-            GL.DrawElements(PrimitiveType.Triangles, indices.Length, DrawElementsType.UnsignedInt, 0);
+
+
+            for (int i=0;i<n;i+=3)
+            {
+                model = Matrix4.CreateTranslation(new Vector3(2*MathF.Log(i*i+1)*MathF.Sin((float)i/10), 0, 2 * MathF.Log(i*i + 1) * MathF.Cos((float)i / 10)));
+                GL.UniformMatrix4(location, true, ref model);
+                GL.DrawElements(PrimitiveType.Triangles, cube.indices.Length, DrawElementsType.UnsignedInt, 0);
+            }
+            //GUI RENDER
+            _controller.Update(this, (float)e.Time);
+            ImGui.Begin("Info");
+            ImGui.SetWindowSize(new System.Numerics.Vector2(200,100));
+            ImGui.Text("Objects rendered:"+n.ToString());
+            ImGui.SliderInt("int", ref n, 0, 5000, "!!!");
+            ImGui.End();
+            _controller.Render();
+            ImGuiController.CheckGLError("End of frame");
             //end logic
 
             SwapBuffers();
         }
-
-        static void Main(string[] args)
+        protected override void OnTextInput(TextInputEventArgs e)
         {
-            
+            base.OnTextInput(e);
+
+
+            _controller.PressChar((char)e.Unicode);
+        }
+        protected override void OnMouseWheel(MouseWheelEventArgs e)
+        {
+            base.OnMouseWheel(e);
+
+            _controller.MouseScroll(e.Offset);
         }
     }
 

@@ -28,3 +28,9 @@ D:\ProgrammingStuff\OpenTKRender\obj\Debug\net6.0\refint\OpenTKRender.dll
 D:\ProgrammingStuff\OpenTKRender\obj\Debug\net6.0\OpenTKRender.pdb
 D:\ProgrammingStuff\OpenTKRender\obj\Debug\net6.0\OpenTKRender.genruntimeconfig.cache
 D:\ProgrammingStuff\OpenTKRender\obj\Debug\net6.0\ref\OpenTKRender.dll
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\ImGui.NET.dll
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\runtimes\linux-x64\native\libcimgui.so
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\runtimes\osx\native\libcimgui.dylib
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\runtimes\win-arm64\native\cimgui.dll
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\runtimes\win-x64\native\cimgui.dll
+D:\ProgrammingStuff\OpenTKRender\bin\Debug\net6.0\runtimes\win-x86\native\cimgui.dll

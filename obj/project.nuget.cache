@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "ZtacM2xc3yk08zFeN5v3IbtyHNDdhoNT0l+2niqTHJ4ovZ/AYW60weaQvA6R/jhlM1j/x2A6fnofER5hkJkYuA==",
+  "dgSpecHash": "2n72IqjaijNAFjZcI2U5Wm1fX1BrClVce6m7GBqGCzPiFGDSAGwZAZ4b0m3NxUZZy9wJLH5zAEv307ErooHppg==",
   "success": true,
   "projectFilePath": "D:\\ProgrammingStuff\\OpenTKRender\\OpenTKRender.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\JohnEden\\.nuget\\packages\\imgui.net\\1.89.4\\imgui.net.1.89.4.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk\\4.7.7\\opentk.4.7.7.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk.compute\\4.7.7\\opentk.compute.4.7.7.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk.core\\4.7.7\\opentk.core.4.7.7.nupkg.sha512",
@@ -15,6 +16,8 @@
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk.windowing.common\\4.7.7\\opentk.windowing.common.4.7.7.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk.windowing.desktop\\4.7.7\\opentk.windowing.desktop.4.7.7.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\opentk.windowing.graphicslibraryframework\\4.7.7\\opentk.windowing.graphicslibraryframework.4.7.7.nupkg.sha512",
+    "C:\\Users\\JohnEden\\.nuget\\packages\\system.buffers\\4.4.0\\system.buffers.4.4.0.nupkg.sha512",
+    "C:\\Users\\JohnEden\\.nuget\\packages\\system.numerics.vectors\\4.4.0\\system.numerics.vectors.4.4.0.nupkg.sha512",
     "C:\\Users\\JohnEden\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\5.0.0\\system.runtime.compilerservices.unsafe.5.0.0.nupkg.sha512"
   ],
   "logs": []
