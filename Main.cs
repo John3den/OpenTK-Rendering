@@ -6,9 +6,8 @@ using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
-using System.Xml.Linq;
 using ImGuiNET;
-
+using System.Timers;
 
 using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Bruh"))
 {
@@ -22,6 +21,8 @@ namespace Simulation
 
     public class Simulation : GameWindow
     {
+        const int N = 1000000;
+        Stopwatch watch;
         Engine.Geometry cube = new Engine.Geometry();
         Engine.Shader shader;
         Engine.Camera camera = new Engine.Camera();
@@ -135,6 +136,8 @@ namespace Simulation
         protected override void OnLoad()
         {
             base.OnLoad();
+
+            watch = System.Diagnostics.Stopwatch.StartNew();
             _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
             GL.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
 
@@ -198,20 +201,26 @@ namespace Simulation
 
             location = GL.GetUniformLocation(shader.Handle, "model");
             GL.BindVertexArray(VertexArrayObject);
-
-
+            if(watch.IsRunning)
+                watch.Stop();
+            long elapsed = watch.ElapsedMilliseconds;
+            elapsed = elapsed != 0 ? elapsed : 1;
+            watch = System.Diagnostics.Stopwatch.StartNew();
             for (int i=0;i<n;i+=3)
             {
                 model = Matrix4.CreateTranslation(new Vector3(2*MathF.Log(i*i+1)*MathF.Sin((float)i/10), 0, 2 * MathF.Log(i*i + 1) * MathF.Cos((float)i / 10)));
                 GL.UniformMatrix4(location, true, ref model);
                 GL.DrawElements(PrimitiveType.Triangles, cube.indices.Length, DrawElementsType.UnsignedInt, 0);
             }
+
             //GUI RENDER
             _controller.Update(this, (float)e.Time);
             ImGui.Begin("Info");
             ImGui.SetWindowSize(new System.Numerics.Vector2(200,100));
             ImGui.Text("Objects rendered:"+n.ToString());
-            ImGui.SliderInt("int", ref n, 0, 5000, "!!!");
+            ImGui.Text("Time elapsed:" + elapsed.ToString()+" ms");
+            ImGui.Text("Frames per second:" + 1000/elapsed);
+            ImGui.SliderInt("int", ref n, 0, N, "objects");
             ImGui.End();
             _controller.Render();
             ImGuiController.CheckGLError("End of frame");
