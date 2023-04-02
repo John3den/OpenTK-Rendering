@@ -10,7 +10,7 @@ uniform vec3 camPos;
 
 vec4 pointLight()
 {	
-	vec3 lightPos = vec3(0,10,0);
+	vec3 lightPos = vec3(10,10,0);
 	vec3 lightVec = lightPos - crntPos;
 
 	float dist = length(lightVec)/1000.0f;

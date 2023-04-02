@@ -17,7 +17,7 @@ uniform mat4 projection;
 
 void main()
 {
-	crntPos = vec3(model * vec4(aPos, 1.0f));
+	crntPos = vec3(vec4(aPos, 1.0) * model);
 	gl_Position =  vec4(aPos, 1.0) * model * view * projection;
 
 	color = vec3(1,0,0);

@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OpenTKRender", "OpenTKRender.csproj", "{F118026D-16BF-4A99-86BD-5489F426226F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTKRender", "OpenTKRender.csproj", "{F118026D-16BF-4A99-86BD-5489F426226F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{7F624F26-BCC6-4D31-B250-5209C1343491}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F624F26-BCC6-4D31-B250-5209C1343491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F624F26-BCC6-4D31-B250-5209C1343491}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F624F26-BCC6-4D31-B250-5209C1343491}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F624F26-BCC6-4D31-B250-5209C1343491}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

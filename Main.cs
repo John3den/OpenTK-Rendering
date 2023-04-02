@@ -8,8 +8,9 @@ using OpenTK.Windowing.GraphicsLibraryFramework;
 using System.Diagnostics;
 using ImGuiNET;
 using System.Timers;
+using System.Linq.Expressions;
 
-using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Bruh"))
+using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Simulation"))
 {
    
     GL.Enable(EnableCap.DepthTest);
@@ -21,10 +22,15 @@ namespace Simulation
 
     public class Simulation : GameWindow
     {
-        const int N = 1000000;
+        int lightMode = 0;
+        const int N = 10000;
         Stopwatch watch;
         Engine.Geometry cube = new Engine.Geometry();
-        Engine.Shader shader;
+        Engine.Shader pointLightShader;
+        Engine.Shader spotLightShader;
+        Engine.Shader directLightShader;
+        Engine.Shader activeShader;
+        Engine.CursorData cursor = new CursorData();
         Engine.Camera camera = new Engine.Camera();
         ImGuiController _controller;
         bool firstMove = true;
@@ -47,35 +53,37 @@ namespace Simulation
             {
                 Close();
             }
+            Vector3 movementVector = new Vector3(0,0,0);
             if (input.IsKeyDown(Keys.W))
             {
-                camera.position += camera.front * camera.speed * (float)e.Time; //Forward 
+                movementVector += camera.Front * camera.Speed * (float)e.Time; //Forward 
             }
-
+            
             if (input.IsKeyDown(Keys.S))
             {
-                camera.position -= camera.front * camera.speed * (float)e.Time; //Backwards
+                movementVector -= camera.Front * camera.Speed * (float)e.Time; //Backwards
             }
 
             if (input.IsKeyDown(Keys.A))
             {
-                camera.position -= Vector3.Normalize(Vector3.Cross(camera.front, camera.up)) * camera.speed * (float)e.Time; //Left
+                movementVector -= Vector3.Normalize(Vector3.Cross(camera.Front, camera.Up)) * camera.Speed * (float)e.Time; //Left
             }
 
             if (input.IsKeyDown(Keys.D))
             {
-                camera.position += Vector3.Normalize(Vector3.Cross(camera.front, camera.up)) * camera.speed * (float)e.Time; //Right
+                movementVector += Vector3.Normalize(Vector3.Cross(camera.Front, camera.Up)) * camera.Speed * (float)e.Time; //Right
             }
 
             if (input.IsKeyDown(Keys.Space))
             {
-                camera.position += camera.up * camera.speed * (float)e.Time; //Up 
+                movementVector += camera.Up * camera.Speed * (float)e.Time; //Up 
             }
 
             if (input.IsKeyDown(Keys.LeftShift))
             {
-                camera.position -= camera.up * camera.speed * (float)e.Time; //Down
+                movementVector -= camera.Up * camera.Speed * (float)e.Time; //Down
             }
+            camera.Move(movementVector);
         }
         protected override void OnResize(ResizeEventArgs e)
         {
@@ -104,25 +112,19 @@ namespace Simulation
             {
                 if (firstMove)
                 {
-                    camera.lastPos = new Vector2(MousePosition.X, MousePosition.Y);
+                    cursor.LastPos = new Vector2(MousePosition.X, MousePosition.Y);
                     firstMove = false;
                 }
                 else
                 {
-                    float deltaX = MousePosition.X - camera.lastPos.X;
-                    float deltaY = MousePosition.Y - camera.lastPos.Y;
-                    camera.lastPos = new Vector2(MousePosition.X, MousePosition.Y);
-
+                    float deltaX = MousePosition.X - cursor.LastPos.X;
+                    float deltaY = MousePosition.Y - cursor.LastPos.Y;
+                    cursor.LastPos = new Vector2(MousePosition.X, MousePosition.Y);
                     camera.Yaw += deltaX * camera.Sensitivity;
-                    //Camera Clamping
-                    if (camera.pitch - deltaY * camera.Sensitivity < 90 &&  camera.pitch - deltaY * camera.Sensitivity > -90)
-                        camera.pitch -= deltaY * camera.Sensitivity;
-                }
+                    camera.Pitch -= deltaY * camera.Sensitivity;
 
-                camera.front.X = (float)Math.Cos(MathHelper.DegreesToRadians(camera.pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(camera.  Yaw));
-                camera.front.Y = (float)Math.Sin(MathHelper.DegreesToRadians(camera.pitch));
-                camera.front.Z = (float)Math.Cos(MathHelper.DegreesToRadians(camera.pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(camera.Yaw));
-                camera.front = Vector3.Normalize(camera.front);
+                }
+                camera.UpdateDirection();
             }
         }
     
@@ -131,19 +133,23 @@ namespace Simulation
             base.OnUnload();
             GL.BindBuffer(BufferTarget.ArrayBuffer, 0);
             GL.DeleteBuffer(VertexBufferObject);
-            shader.Dispose();
+            spotLightShader.Dispose();
+            directLightShader.Dispose();
+            pointLightShader.Dispose();
         }
         protected override void OnLoad()
         {
             base.OnLoad();
-
             watch = System.Diagnostics.Stopwatch.StartNew();
             _controller = new ImGuiController(ClientSize.X, ClientSize.Y);
             GL.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
 
             //start logic
             CursorState = CursorState.Grabbed;
-            shader = new Shader("D:\\ProgrammingStuff\\OpenTKRender\\SimpleLighting.vert", "D:\\ProgrammingStuff\\OpenTKRender\\SimpleLighting.frag");
+            // Going up directories: net6.0 -> Debug -> bin -> solutionFolder
+            pointLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\PointLight.frag");
+            directLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\DirectLight.frag");
+            spotLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\SpotLight.frag");
             //VAO
             VertexArrayObject = GL.GenVertexArray();
             GL.BindVertexArray(VertexArrayObject);
@@ -179,27 +185,39 @@ namespace Simulation
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 800 / 600, 0.1f, 1000.0f);
 
             Vector3 cameraTarget = Vector3.Zero;
-            Vector3 cameraDirection = Vector3.Normalize(camera.position - cameraTarget);
+            Vector3 cameraDirection = Vector3.Normalize(camera.GetPosition() - cameraTarget);
             Vector3 up = Vector3.UnitY;
             Vector3 cameraRight = Vector3.Normalize(Vector3.Cross(up, cameraDirection));
             Vector3 cameraUp = Vector3.Cross(cameraDirection, cameraRight);
 
-            Matrix4 view = Matrix4.LookAt(camera.position, camera.position + camera.front, up);
+            Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
+            switch(lightMode)
+            {
+                case 0:
+                    activeShader = pointLightShader;
+                    break;
+                case 1:
+                    activeShader = spotLightShader;
+                    break;
+                case 2:
+                    activeShader = directLightShader;
+                    break;
+            }
 
-            shader.Use();
+            activeShader.Use();
             //Uniforms
-            int location = GL.GetUniformLocation(shader.Handle, "ourColor");
+            int location = GL.GetUniformLocation(activeShader.Handle, "ourColor");
             GL.Uniform4(location, 0.0f, 1.0f, 0.0f, 1.0f);
-            location = GL.GetUniformLocation(shader.Handle, "camPos");
-            GL.Uniform3(location, camera.position);
-            location = GL.GetUniformLocation(shader.Handle, "model");
+            location = GL.GetUniformLocation(activeShader.Handle, "camPos");
+            GL.Uniform3(location, camera.GetPosition());
+            location = GL.GetUniformLocation(activeShader.Handle, "model");
             GL.UniformMatrix4(location, true, ref model);
-            location = GL.GetUniformLocation(shader.Handle, "view");
+            location = GL.GetUniformLocation(activeShader.Handle, "view");
             GL.UniformMatrix4(location, true, ref view);
-            location = GL.GetUniformLocation(shader.Handle, "projection");
+            location = GL.GetUniformLocation(activeShader.Handle, "projection");
             GL.UniformMatrix4(location, true, ref projection);
 
-            location = GL.GetUniformLocation(shader.Handle, "model");
+            location = GL.GetUniformLocation(activeShader.Handle, "model");
             GL.BindVertexArray(VertexArrayObject);
             if(watch.IsRunning)
                 watch.Stop();
@@ -208,7 +226,7 @@ namespace Simulation
             watch = System.Diagnostics.Stopwatch.StartNew();
             for (int i=0;i<n;i+=3)
             {
-                model = Matrix4.CreateTranslation(new Vector3(2*MathF.Log(i*i+1)*MathF.Sin((float)i/10), 0, 2 * MathF.Log(i*i + 1) * MathF.Cos((float)i / 10)));
+                model = Matrix4.CreateTranslation(new Vector3(0.1f*(MathF.Floor(i/10))*MathF.Sin((float)i/10), 0, 0.1f * (MathF.Floor(i / 10)) * MathF.Cos((float)i / 10)));
                 GL.UniformMatrix4(location, true, ref model);
                 GL.DrawElements(PrimitiveType.Triangles, cube.indices.Length, DrawElementsType.UnsignedInt, 0);
             }
@@ -216,11 +234,14 @@ namespace Simulation
             //GUI RENDER
             _controller.Update(this, (float)e.Time);
             ImGui.Begin("Info");
-            ImGui.SetWindowSize(new System.Numerics.Vector2(200,100));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(200,400));
             ImGui.Text("Objects rendered:"+n.ToString());
             ImGui.Text("Time elapsed:" + elapsed.ToString()+" ms");
             ImGui.Text("Frames per second:" + 1000/elapsed);
             ImGui.SliderInt("int", ref n, 0, N, "objects");
+            ImGui.Text("Light Mode: " + lightMode);
+            if (ImGui.Button("change"))
+                lightMode = (lightMode + 1) % 3;
             ImGui.End();
             _controller.Render();
             ImGuiController.CheckGLError("End of frame");
