@@ -551,5 +551,10 @@ void main()
                 Debug.Print($"{title} ({i++}): {error}");
             }
         }
+
+        internal void MouseScroll(object offset)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
