@@ -22,16 +22,23 @@ namespace Simulation
     public class Simulation : GameWindow
     {
         int lightMode = 0;
-        const int N = 10000;
-        Actor defaultCube;
-        Engine.Geometry cube = new Engine.Geometry();
+        const int N = 20;
+        Actor whole;
+        Actor split;
+        Engine.Geometry normalCube = new Engine.Geometry(0);
+        Engine.Geometry splitCube = new Engine.Geometry(1);
         Engine.Shader pointLightShader;
         Engine.Shader spotLightShader;
         Engine.Shader directLightShader;
+
+        Engine.Shader vertPointLightShader;
+        Engine.Shader vertSpotLightShader;
+        Engine.Shader vertDirectLightShader;
         Engine.Shader activeShader;
         Engine.CursorData cursor = new CursorData();
         Engine.Camera camera = new Engine.Camera();
         bool firstMove = true;
+        int sceneNumber=0;
         int n = 1;
         UI gui;
         Timer timer;
@@ -113,11 +120,16 @@ namespace Simulation
             //start logic
             CursorState = CursorState.Grabbed;
             // Going up directories: net6.0 -> Debug -> bin -> solutionFolder
-            pointLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\PointLight.frag");
-            directLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\DirectLight.frag");
-            spotLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\SpotLight.frag");
+            pointLightShader = new Shader("../../../Resources\\Generic.vert", "../../../Resources\\PointLight.frag");
+            directLightShader = new Shader("../../../Resources\\Generic.vert", "../../../Resources\\DirectLight.frag");
+            spotLightShader = new Shader("../../../Resources\\Generic.vert", "../../../Resources\\SpotLight.frag");
 
-            defaultCube = new Actor(cube);
+            vertPointLightShader = new Shader("../../../Resources\\PointLight.vert", "../../../Resources\\Generic.frag");
+            vertDirectLightShader = new Shader("../../../Resources\\DirectLight.vert", "../../../Resources\\Generic.frag");
+            vertSpotLightShader = new Shader("../../../Resources\\SpotLight.vert", "../../../Resources\\Generic.frag");
+
+            whole = new Actor(normalCube);
+            split = new Actor(splitCube);
             //end logic
         }
 
@@ -125,28 +137,43 @@ namespace Simulation
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            switch (lightMode)
+            switch (lightMode + 3*sceneNumber)
             {
                 case 0:
-                    activeShader = pointLightShader;
+                    activeShader = vertPointLightShader;
                     break;
                 case 1:
-                    activeShader = spotLightShader;
+                    activeShader = vertSpotLightShader;
                     break;
                 case 2:
+                    activeShader = vertDirectLightShader;
+                    break;
+                case 3:
+                    activeShader = pointLightShader;
+                    break;
+                case 4:
+                    activeShader = spotLightShader;
+                    break;
+                case 5:
                     activeShader = directLightShader;
                     break;
             }
 
             activeShader.Use();
             //Uniforms
-
-            
-            RenderBuffer buffer = new RenderBuffer(camera, defaultCube, activeShader, n);
+            RenderBuffer buffer;
+            if (sceneNumber == 0)
+            {
+                buffer = new RenderBuffer(camera, whole, activeShader, n);
+            }
+            else
+            {
+                buffer = new RenderBuffer(camera, split, activeShader, n);
+            }
             Renderer renderer = new Renderer();
             renderer.RenderScene(buffer);
             timer.Stop();
-            gui.Render(this,timer,(float)e.Time,ref n,N,ref lightMode);
+            gui.Render(this,timer,(float)e.Time,ref n,N,ref lightMode, ref sceneNumber);
             timer.Start();
             SwapBuffers();
         }
