@@ -1,4 +1,6 @@
 ﻿using OpenTK.Mathematics;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
 using System;
 using System.Collections.Generic;
@@ -10,10 +12,47 @@ namespace Engine
 {
     public class Input
     {
+        Vector2 _cursor;
         Camera _camera;
+        bool firstMove = true;
         public Input(Camera camera)
         {
-            _camera = camera;
+            _camera = camera; 
+        }
+        public void GrabCursor(GameWindow window)
+        {
+            if (window.IsMouseButtonPressed(MouseButton.Right))
+            {
+                if (window.CursorState == CursorState.Grabbed)
+                    window.CursorState = CursorState.Normal;
+                else
+                {
+
+                    window.CursorState = CursorState.Grabbed;
+                }
+
+            }
+        }
+        public void MoveCamera(GameWindow window)
+        {
+            if (window.CursorState == CursorState.Grabbed)
+            {
+                if (firstMove)
+                {
+                    _cursor = new Vector2(window.MousePosition.X, window.MousePosition.Y);
+                    firstMove = false;
+                }
+                else
+                {
+                    float deltaX = window.MousePosition.X - _cursor.X;
+                    float deltaY = window.MousePosition.Y - _cursor.Y;
+                    _cursor = new Vector2(window.MousePosition.X, window.MousePosition.Y);
+                    _camera.Yaw += deltaX * _camera.Sensitivity;
+                    _camera.Pitch -= deltaY * _camera.Sensitivity;
+
+                }
+                _camera.UpdateDirection();
+            }
         }
         public void HandleControls(KeyboardState input, float time)
         {

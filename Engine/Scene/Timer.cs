@@ -9,8 +9,8 @@ namespace Engine
 {
     public class Timer
     {
-        Stopwatch watch;
-        float _time;
+        private Stopwatch watch;
+        private float _time;
         public Timer()
         {
             watch = System.Diagnostics.Stopwatch.StartNew();

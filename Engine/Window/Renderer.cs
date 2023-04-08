@@ -17,6 +17,7 @@ namespace Engine
        
         public void RenderScene(RenderBuffer buffer)
         {
+            buffer.ActiveShader.Use();
             Actor currentActor = buffer.GetActor();
             int location = GL.GetUniformLocation(buffer.ActiveShader.Handle, "model");
             while (!buffer.IsEmpty())

@@ -16,34 +16,12 @@ namespace Engine
         public Matrix4 projection;
         public Vector3 up;
         public Matrix4 view;
-        public Scene scene;
-        Engine.Shader pointLightShader;
-        Engine.Shader spotLightShader;
-        Engine.Shader directLightShader;
+        public Scene _scene;
         Actor _actor;
         int _maxState = 1;
         int _state = 0;
-        public void PickShader()
-        {
-            switch (scene.lightMode)
-            {
-                case 0:
-                    ActiveShader = pointLightShader;
-                    break;
-                case 1:
-                    ActiveShader = spotLightShader;
-                    break;
-                case 2:
-                    ActiveShader = directLightShader;
-                    break;
-            }
-        }
-        public void CompileShaders()
-        {
-            pointLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\PointLight.frag");
-            directLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\DirectLight.frag");
-            spotLightShader = new Shader("../../../Resources\\SimpleLighting.vert", "../../../Resources\\SpotLight.frag");
-        }
+        public Shader ActiveShader { get; set; }
+        
         public void SetUniforms(Camera camera)
         {
             Matrix4.CreateOrthographicOffCenter(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1000.0f);
@@ -69,19 +47,34 @@ namespace Engine
             GL.UniformMatrix4(location, true, ref projection);
             location = GL.GetUniformLocation(ActiveShader.Handle, "model");
         }
-        public RenderBuffer(Camera camera, Actor actor, Shader shader, int maxState)
+        public RenderBuffer(Scene scene)
         {
-            ActiveShader = shader;
-            _maxState = maxState;
-            _actor = actor;
-            SetUniforms(camera);
-            actor.Set();
+            _scene = scene;
+            ActiveShader = _scene._point;
+            _maxState = _scene.n;
+            _actor = scene._actor;
+            SetUniforms(scene._camera);
+            _actor.Set();
         }
-
+        public void ChooseShader(int mode)
+        {
+            switch (mode)
+            {
+                case 0:
+                    ActiveShader = _scene._point;
+                    break;
+                case 1:
+                    ActiveShader = _scene._direct;
+                    break;
+                case 2:
+                    ActiveShader = _scene._spotlight;
+                    break;
+            }
+        }
         public void NextActor()
         {
             _state++;
-            _actor.Transform = Matrix4.CreateTranslation(new Vector3(2f * (MathF.Floor(_state*10 / 10)) * MathF.Sin((float)_state / 10), 0, 2f * (MathF.Floor(_state*10 / 10)) * MathF.Cos((float)_state / 10)));
+            _actor.Transform = Matrix4.CreateTranslation(new Vector3(0.1f * (MathF.Floor(_state*10 / 10)) * MathF.Sin((float)_state / 10), 0, 0.1f * (MathF.Floor(_state*10 / 10)) * MathF.Cos((float)_state / 10)));
         }
         public Actor GetActor()
         {
@@ -91,6 +84,6 @@ namespace Engine
         {
             return _maxState == _state;
         }
-        public Shader ActiveShader { get; set; }
+
     }
 }
