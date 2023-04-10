@@ -1,21 +1,21 @@
 ﻿using OpenTK.Graphics.OpenGL4;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
 
 namespace Engine
 {
     public class Shader : IDisposable
     {
-        public int Handle;
-
+        private int _handle;
         public void Use()
         {
-            GL.UseProgram(Handle);
+            GL.UseProgram(_handle);
+        }
+        public int GetHandle()
+        {
+            return _handle;
         }
         public int GetAttribLocation(string attribName)
         {
-            return GL.GetAttribLocation(Handle, attribName);
+            return GL.GetAttribLocation(_handle, attribName);
         }
         public Shader(string vertexPath, string fragmentPath)
         {
@@ -45,21 +45,21 @@ namespace Engine
                 string infoLog = GL.GetShaderInfoLog(FragmentShader);
                 Console.WriteLine(infoLog);
             }
-            Handle = GL.CreateProgram();
+            _handle = GL.CreateProgram();
 
-            GL.AttachShader(Handle, VertexShader);
-            GL.AttachShader(Handle, FragmentShader);
+            GL.AttachShader(_handle, VertexShader);
+            GL.AttachShader(_handle, FragmentShader);
 
-            GL.LinkProgram(Handle);
+            GL.LinkProgram(_handle);
 
-            GL.GetProgram(Handle, GetProgramParameterName.LinkStatus, out int compilation_success);
+            GL.GetProgram(_handle, GetProgramParameterName.LinkStatus, out int compilation_success);
             if (compilation_success == 0)
             {
-                string infoLog = GL.GetProgramInfoLog(Handle);
+                string infoLog = GL.GetProgramInfoLog(_handle);
                 Console.WriteLine(infoLog);
             }
-            GL.DetachShader(Handle, VertexShader);
-            GL.DetachShader(Handle, FragmentShader);
+            GL.DetachShader(_handle, VertexShader);
+            GL.DetachShader(_handle, FragmentShader);
             GL.DeleteShader(FragmentShader);
             GL.DeleteShader(VertexShader);
         }
@@ -69,18 +69,15 @@ namespace Engine
         {
             if (!disposedValue)
             {
-                GL.DeleteProgram(Handle);
+                GL.DeleteProgram(_handle);
 
                 disposedValue = true;
             }
         }
-
         ~Shader()
         {
-            GL.DeleteProgram(Handle);
+            GL.DeleteProgram(_handle);
         }
-
-
         public void Dispose()
         {
             Dispose(true);

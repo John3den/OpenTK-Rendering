@@ -1,15 +1,7 @@
-﻿using Dear_ImGui_Sample;
-using Engine;
+﻿using Engine;
 using OpenTK.Graphics.OpenGL4;
-using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Diagnostics;
-using ImGuiNET;
-using System.Timers;
-using System.Linq.Expressions;
-using System;
 
 using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Simulation"))
 {
@@ -63,7 +55,7 @@ namespace Simulation
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
             buffer = new RenderBuffer(sceneManager.CurrentScene);
-            buffer.ChooseShader(sceneManager.CurrentScene.lightMode);           
+            buffer.ChooseShader(sceneManager.CurrentScene.GetLightMode());           
             renderer.RenderScene(buffer);
             windowManager.RenderUI(sceneManager, e);
             SwapBuffers();

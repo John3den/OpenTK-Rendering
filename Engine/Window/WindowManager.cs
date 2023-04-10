@@ -3,11 +3,6 @@ using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine
 {
@@ -31,7 +26,7 @@ namespace Engine
         }
         public void RenderUI(SceneManager sceneManager, FrameEventArgs e)
         {
-            gui.Render(_window, sceneManager.CurrentScene.GetElapsedTime(), (float)e.Time, ref sceneManager.CurrentScene.n, sceneManager.CurrentScene.N, ref sceneManager.CurrentScene.lightMode, ref sceneManager._sceneNumber);
+            gui.Render(_window, sceneManager.CurrentScene.GetElapsedTime(), (float)e.Time, sceneManager.CurrentScene, sceneManager);
         }
         public void Resize(ResizeEventArgs e)
         {

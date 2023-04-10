@@ -1,39 +1,9 @@
 ﻿using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Engine
 {
     public class Camera
     {
-        public Camera()
-        {
-            Up = new Vector3(0.0f, 1.0f, 0.0f);
-            Front = new Vector3(0.0f, 1.0f, -1.0f);
-            Yaw = -90;
-            Pitch = 0;
-            Speed = 15f;
-            Sensitivity = 0.1f;
-        }
-        public void UpdateDirection()
-        {
-            float X = (float)Math.Cos(MathHelper.DegreesToRadians(Pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(Yaw));
-            float Y = (float)Math.Sin(MathHelper.DegreesToRadians(Pitch));
-            float Z = (float)Math.Cos(MathHelper.DegreesToRadians(Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(Yaw));
-            Front = Vector3.Normalize(new Vector3(X, Y, Z));
-        }
-        public void Move(Vector3 delta)
-        {
-            _position += delta;
-        }
-        public Vector3 GetPosition()
-        {
-            return _position;
-        }
         private Vector3 _position = new Vector3(0.0f, 0.0f, 30.0f);
         private float _yaw;
         private float _pitch = 0;
@@ -50,7 +20,7 @@ namespace Engine
                 {
                     _yaw = value - 360;
                 }
-                else if(value < 0)
+                else if (value < 0)
                 {
                     _yaw = value + 360;
                 }
@@ -78,6 +48,30 @@ namespace Engine
                     _pitch = value;
                 }
             }
+        }
+        public Camera()
+        {
+            Up = new Vector3(0.0f, 1.0f, 0.0f);
+            Front = new Vector3(0.0f, 1.0f, -1.0f);
+            Yaw = -90;
+            Pitch = 0;
+            Speed = 15f;
+            Sensitivity = 0.1f;
+        }
+        public void UpdateDirection()
+        {
+            float X = (float)Math.Cos(MathHelper.DegreesToRadians(Pitch)) * (float)Math.Cos(MathHelper.DegreesToRadians(Yaw));
+            float Y = (float)Math.Sin(MathHelper.DegreesToRadians(Pitch));
+            float Z = (float)Math.Cos(MathHelper.DegreesToRadians(Pitch)) * (float)Math.Sin(MathHelper.DegreesToRadians(Yaw));
+            Front = Vector3.Normalize(new Vector3(X, Y, Z));
+        }
+        public void Move(Vector3 delta)
+        {
+            _position += delta;
+        }
+        public Vector3 GetPosition()
+        {
+            return _position;
         }
     }
 }

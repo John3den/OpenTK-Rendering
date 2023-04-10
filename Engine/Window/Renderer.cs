@@ -1,14 +1,5 @@
-﻿using Dear_ImGui_Sample;
-using Engine;
-using OpenTK.Graphics.OpenGL4;
+﻿using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
-using OpenTK.Windowing.GraphicsLibraryFramework;
-using System.Diagnostics;
-using ImGuiNET;
-using System.Timers;
-using System.Linq.Expressions;
 
 namespace Engine
 {
@@ -19,7 +10,7 @@ namespace Engine
         {
             buffer.ActiveShader.Use();
             Actor currentActor = buffer.GetActor();
-            int location = GL.GetUniformLocation(buffer.ActiveShader.Handle, "model");
+            int location = GL.GetUniformLocation(buffer.ActiveShader.GetHandle(), "model");
             while (!buffer.IsEmpty())
             {
                 Matrix4 model = currentActor.Transform;

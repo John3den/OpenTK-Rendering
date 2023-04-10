@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Engine
 {
     public class Scene
@@ -11,7 +6,29 @@ namespace Engine
         public readonly Shader _point;
         public readonly Shader _direct;
         public readonly Shader _spotlight;
+        private int _lightMode = 0;
+        public readonly Actor _actor;
+        public readonly Camera _camera;
+        public const int N = 10000;
+        private int _n = 1;
+        public int n
+        {
+            get { return _n; }
+            set { if (value >= 0) _n = value; }
+        }
         private Timer _timer;
+        public int GetLightMode()
+        {
+            return _lightMode;
+        }
+        public void NextObjectCap()
+        {
+            n = (n + 1) % N;
+        }
+        public void NextLightMode()
+        {
+            _lightMode = (_lightMode + 1) % 3;
+        }
         public float GetElapsedTime()
         {
             _timer.Stop();
@@ -27,10 +44,5 @@ namespace Engine
             _actor = actor;
             _camera = camera; 
         }
-        public Actor _actor;
-        public Camera _camera;
-        public int lightMode = 0;
-        public int N = 10000;
-        public int n = 1;
     }
 }

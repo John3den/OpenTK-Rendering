@@ -11,15 +11,10 @@ namespace Engine
 {
     public class RenderBuffer
     {
-
-        public Matrix4 model;
-        public Matrix4 projection;
-        public Vector3 up;
-        public Matrix4 view;
-        public Scene _scene;
-        Actor _actor;
-        int _maxState = 1;
-        int _state = 0;
+        private Scene _scene;
+        private Actor _actor;
+        private int _maxState = 1;
+        private int _state = 0;
         public Shader ActiveShader { get; set; }
         
         public void SetUniforms(Camera camera)
@@ -35,17 +30,17 @@ namespace Engine
             Vector3 cameraUp = Vector3.Cross(cameraDirection, cameraRight);
             Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
 
-            int location = GL.GetUniformLocation(ActiveShader.Handle, "ourColor");
+            int location = GL.GetUniformLocation(ActiveShader.GetHandle(), "ourColor");
             GL.Uniform4(location, 0.0f, 1.0f, 0.0f, 1.0f);
-            location = GL.GetUniformLocation(ActiveShader.Handle, "camPos");
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "camPos");
             GL.Uniform3(location, camera.GetPosition());
-            location = GL.GetUniformLocation(ActiveShader.Handle, "model");
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "model");
             GL.UniformMatrix4(location, true, ref model);
-            location = GL.GetUniformLocation(ActiveShader.Handle, "view");
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "view");
             GL.UniformMatrix4(location, true, ref view);
-            location = GL.GetUniformLocation(ActiveShader.Handle, "projection");
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "projection");
             GL.UniformMatrix4(location, true, ref projection);
-            location = GL.GetUniformLocation(ActiveShader.Handle, "model");
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "model");
         }
         public RenderBuffer(Scene scene)
         {

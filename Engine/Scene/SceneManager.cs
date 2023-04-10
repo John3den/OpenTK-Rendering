@@ -1,16 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace Engine
 {
     public class SceneManager
     {
-        public List<Scene> _scenes;
-        public int _sceneNumber;
-        const int MAXSCENES = 2;
+        private List<Scene> _scenes;
+        private int _sceneNumber;
+        private const int MAXSCENES = 2;
+        public void NextScene()
+        {
+            _sceneNumber = (_sceneNumber + 1) % MAXSCENES;
+        }
         public SceneManager(Camera camera) 
         {
             _scenes = new List<Scene>();
@@ -20,11 +19,15 @@ namespace Engine
             _scenes.Add(new Scene(new Actor(new Engine.Geometry(1)), camera, new Shader("../../../Resources\\PointLight.vert", "../../../Resources\\Generic.frag"),
                                                                              new Shader("../../../Resources\\DirectLight.vert", "../../../Resources\\Generic.frag"),
                                                                              new Shader("../../../Resources\\SpotLight.vert", "../../../Resources\\Generic.frag")));
-            }
+        }
+        public int GetSceneNumber()
+        {
+            return _sceneNumber;
+        }
         public void ChangeScene()
         {
             _sceneNumber = (_sceneNumber + 1) % MAXSCENES;
         }
-        public Scene CurrentScene { get {return _scenes[_sceneNumber]; }}
+        public Scene CurrentScene { get { return _scenes[_sceneNumber]; }}
     }
 }
