@@ -4,11 +4,11 @@ namespace Engine
 {
     public class Timer
     {
-        private Stopwatch watch;
+        private Stopwatch _watch;
         private float _time;
         public Timer()
         {
-            watch = System.Diagnostics.Stopwatch.StartNew();
+            _watch = System.Diagnostics.Stopwatch.StartNew();
         }
         public float Get()
         {
@@ -16,15 +16,15 @@ namespace Engine
         }
         public void Stop()
         {
-            if (watch.IsRunning)
-                watch.Stop();
-            long elapsed = watch.ElapsedMilliseconds;
+            if (_watch.IsRunning)
+                _watch.Stop();
+            long elapsed = _watch.ElapsedMilliseconds;
             elapsed = elapsed != 0 ? elapsed : 1;
             _time = elapsed;
         }
         public void Start()
         {
-            watch = System.Diagnostics.Stopwatch.StartNew();
+            _watch = System.Diagnostics.Stopwatch.StartNew();
         }
     }
 }

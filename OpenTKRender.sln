@@ -5,7 +5,7 @@ VisualStudioVersion = 17.5.33414.496
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OpenTKRender", "OpenTKRender.csproj", "{F118026D-16BF-4A99-86BD-5489F426226F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Engine", "Engine\Engine.csproj", "{7F624F26-BCC6-4D31-B250-5209C1343491}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "SharedEngine", "SharedEngine\SharedEngine.shproj", "{5F93462F-8C7A-4D61-A7B6-427EBE42569E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,15 +17,15 @@ Global
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F118026D-16BF-4A99-86BD-5489F426226F}.Release|Any CPU.Build.0 = Release|Any CPU
-		{7F624F26-BCC6-4D31-B250-5209C1343491}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{7F624F26-BCC6-4D31-B250-5209C1343491}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{7F624F26-BCC6-4D31-B250-5209C1343491}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{7F624F26-BCC6-4D31-B250-5209C1343491}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7EA55D86-247B-4586-B549-65D31EEEEFBB}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		SharedEngine\SharedEngine.projitems*{5f93462f-8c7a-4d61-a7b6-427ebe42569e}*SharedItemsImports = 13
+		SharedEngine\SharedEngine.projitems*{f118026d-16bf-4a99-86bd-5489f426226f}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

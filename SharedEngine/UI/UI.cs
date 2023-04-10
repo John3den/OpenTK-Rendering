@@ -6,7 +6,7 @@ using OpenTK.Windowing.Desktop;
 
 namespace Engine
 {
-    
+
     public class UI
     {
         private string[] LightingModes = { "point", "spot", "direct" };
@@ -40,7 +40,7 @@ namespace Engine
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
             if (ImGui.Button("change light"))
                 scene.NextLightMode();
-            ImGui.Text("Scene: task " + (3+ manager.GetSceneNumber()));
+            ImGui.Text("Scene: task " + (3 + manager.GetSceneNumber()));
             if (ImGui.Button("change scene"))
                 manager.NextScene();
             ImGui.End();
