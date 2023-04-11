@@ -13,12 +13,13 @@ namespace Engine
         public SceneManager(Camera camera) 
         {
             _scenes = new List<Scene>();
-            _scenes.Add(new Scene(new Actor(new Engine.Geometry(0)), camera, new Shader("../../../Resources\\Generic.vert", "../../../Resources\\PointLight.frag"),
-                                                                             new Shader("../../../Resources\\Generic.vert", "../../../Resources\\DirectLight.frag"),
-                                                                             new Shader("../../../Resources\\Generic.vert", "../../../Resources\\SpotLight.frag")));
-            _scenes.Add(new Scene(new Actor(new Engine.Geometry(1)), camera, new Shader("../../../Resources\\PointLight.vert", "../../../Resources\\Generic.frag"),
-                                                                             new Shader("../../../Resources\\DirectLight.vert", "../../../Resources\\Generic.frag"),
-                                                                             new Shader("../../../Resources\\SpotLight.vert", "../../../Resources\\Generic.frag")));
+            string ShaderFolder = "../../../Resources\\Shaders\\";
+            _scenes.Add(new Scene(new Actor(new Engine.Geometry(0)), camera, new Shader(ShaderFolder + "Vertex\\Generic.vert", ShaderFolder + "Fragment\\PointLight.frag"),
+                                                                             new Shader(ShaderFolder + "Vertex\\Generic.vert", ShaderFolder + "Fragment\\DirectLight.frag"),
+                                                                             new Shader(ShaderFolder + "Vertex\\Generic.vert", ShaderFolder + "Fragment\\SpotLight.frag")));
+            _scenes.Add(new Scene(new Actor(new Engine.Geometry(1)), camera, new Shader(ShaderFolder + "Vertex\\PointLight.vert", ShaderFolder + "Fragment\\Generic.frag"),
+                                                                             new Shader(ShaderFolder + "Vertex\\DirectLight.vert", ShaderFolder + "Fragment\\Generic.frag"),
+                                                                             new Shader(ShaderFolder + "Vertex\\SpotLight.vert", ShaderFolder + "Fragment\\Generic.frag")));
         }
         public int GetSceneNumber()
         {

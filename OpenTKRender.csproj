@@ -13,6 +13,10 @@
     <PackageReference Include="OpenTK" Version="4.7.7" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Geometries\" />
+  </ItemGroup>
+
   <Import Project="SharedEngine\SharedEngine.projitems" Label="Shared" />
 
 </Project>

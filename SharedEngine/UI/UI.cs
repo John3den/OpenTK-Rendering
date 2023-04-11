@@ -40,7 +40,7 @@ namespace Engine
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
             if (ImGui.Button("change light"))
                 scene.NextLightMode();
-            ImGui.Text("Scene: task " + (3 + manager.GetSceneNumber()));
+            ImGui.Text("Scene: task " + (4 - manager.GetSceneNumber()));
             if (ImGui.Button("change scene"))
                 manager.NextScene();
             ImGui.End();
