@@ -69,7 +69,7 @@ namespace Engine
         public void NextActor()
         {
             _state++;
-            _actor.Transform = Matrix4.CreateTranslation(new Vector3(0.1f * (MathF.Floor(_state*10 / 10)) * MathF.Sin((float)_state / 10), 0, 0.1f * (MathF.Floor(_state*10 / 10)) * MathF.Cos((float)_state / 10)));
+            _actor.Transform = Matrix4.CreateTranslation(new Vector3(0.03f * (MathF.Floor(_state*10 / 10)) * MathF.Sin((float)_state / 10), 0, 0.03f * (MathF.Floor(_state*10 / 10)) * MathF.Cos((float)_state / 10)));
         }
         public Actor GetActor()
         {

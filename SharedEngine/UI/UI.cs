@@ -9,7 +9,7 @@ namespace Engine
 
     public class UI
     {
-        private string[] LightingModes = { "point", "spot", "direct" };
+        private string[] LightingModes = { "point", "direct", "spot" };
         private ImGuiController _controller;
         public UI(int w, int h)
         {

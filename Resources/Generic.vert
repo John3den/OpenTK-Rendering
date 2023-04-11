@@ -21,5 +21,5 @@ void main()
 	gl_Position =  vec4(aPos, 1.0) * model * view * projection;
 
 	color = vec3(1,0,0);
-	Normal = (vec4(aNormal, 1.0f)*model).xyz;
+	Normal = vec3(vec4(aNormal, 1.0f));
 }

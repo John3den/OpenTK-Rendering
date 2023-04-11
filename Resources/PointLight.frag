@@ -10,14 +10,13 @@ uniform vec3 camPos;
 
 vec4 pointLight()
 {	
-	vec3 lightPos = vec3(10,10,0);
+	vec3 lightPos = vec3(0,0.7f,0);
 	vec3 lightVec = lightPos - crntPos;
 
-	float dist = length(lightVec)/1000.0f;
+	float dist = length(lightVec);
 	float a = 3.0;
 	float b = 0.7;
-	float inten = 1.0f / (a * dist * dist + b * dist + 1.0f);
-
+	float inten =10.0f / (a * dist * dist/2 + b * dist + 1.0f);
 
 	float ambient = 0.20f;
 
@@ -26,14 +25,13 @@ vec4 pointLight()
 	vec3 lightDirection = normalize(lightVec);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
-
 	float specularLight = 0.10f;
 	vec3 viewDirection = normalize(camPos - crntPos);	
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f),2);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f),16);
 	float specular = specAmount * specularLight;
 
-	return vec4(color*(specular+diffuse+ambient) ,1.0f) ;
+	return vec4(color*((specular + diffuse)*inten + ambient) ,1.0f) ;
 }
 
 void main()
