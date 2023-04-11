@@ -11,18 +11,20 @@ namespace Engine
         public float Sensitivity { get; private set; }
         public Vector3 Up { get; private set; }
         public Vector3 Front { get; set; }
+        private const float MAX_YAW = 360.0f;
+        private const float MIN_YAW = 0.0f;
         public float Yaw
         {
             get { return _yaw; }
             set
             {
-                if (value > 360)
+                if (value > MAX_YAW)
                 {
-                    _yaw = value - 360;
+                    _yaw = value - MAX_YAW;
                 }
-                else if (value < 0)
+                else if (value < MIN_YAW)
                 {
-                    _yaw = value + 360;
+                    _yaw = value + MAX_YAW;
                 }
                 else
                 {
@@ -30,18 +32,21 @@ namespace Engine
                 }
             }
         }
+        private const float MAX_PITCH = 90;
+        private const float MIN_PITCH = -90f;
+        private const float EPSILON = 1.0f;
         public float Pitch
         {
             get { return _pitch; }
             set
             {
-                if (value > 89)
+                if (value > MAX_PITCH - EPSILON) 
                 {
-                    _pitch = 89;
+                    _pitch = MAX_PITCH - EPSILON;
                 }
-                else if (value < -89)
+                else if (value < MIN_PITCH + EPSILON)
                 {
-                    _pitch = -89;
+                    _pitch = MIN_PITCH + EPSILON;
                 }
                 else
                 {

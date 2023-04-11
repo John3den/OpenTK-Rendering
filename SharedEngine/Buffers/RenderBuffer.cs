@@ -15,23 +15,22 @@ namespace Engine
         private Actor _actor;
         private int _maxState = 1;
         private int _state = 0;
+        private const float DENSITY = 0.03f;
+        private const float MAX_RENDER_DISTANCE = 1000.0f;
+        private const float MIN_RENDER_DISTANCE = 0.1f;
+        private const int RESOLUTION_X = 800;
+        private const int RESOLUTION_Y = 600;
         public Shader ActiveShader { get; set; }
         
         public void SetUniforms(Camera camera)
         {
-            Matrix4.CreateOrthographicOffCenter(0.0f, 800.0f, 0.0f, 600.0f, 0.1f, 1000.0f);
-            Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), (float)800 / (float)600, 0.1f, 1000.0f);
             Matrix4 model = Matrix4.CreateTranslation(new Vector3(0, 0, 0));
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), 800 / 600, 0.1f, 1000.0f);
-            Vector3 cameraTarget = Vector3.Zero;
-            Vector3 cameraDirection = Vector3.Normalize(camera.GetPosition() - cameraTarget);
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), RESOLUTION_X / RESOLUTION_Y, MIN_RENDER_DISTANCE, MAX_RENDER_DISTANCE);
             Vector3 up = Vector3.UnitY;
-            Vector3 cameraRight = Vector3.Normalize(Vector3.Cross(up, cameraDirection));
-            Vector3 cameraUp = Vector3.Cross(cameraDirection, cameraRight);
             Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
 
             int location = GL.GetUniformLocation(ActiveShader.GetHandle(), "ourColor");
-            GL.Uniform4(location, 0.0f, 1.0f, 0.0f, 1.0f);
+            GL.Uniform4(location, 1.0f, 0.0f, 0.0f, 1.0f);
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "camPos");
             GL.Uniform3(location, camera.GetPosition());
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "model");
@@ -69,7 +68,11 @@ namespace Engine
         public void NextActor()
         {
             _state++;
-            _actor.Transform = Matrix4.CreateTranslation(new Vector3(0.03f * (MathF.Floor(_state*10 / 10)) * MathF.Sin((float)_state / 10), 0, 0.03f * (MathF.Floor(_state*10 / 10)) * MathF.Cos((float)_state / 10)));
+            float radius = MathF.Floor(_state * 10 / 10);
+            float angle = (float)_state / 10;
+            _actor.Transform = Matrix4.CreateTranslation(new Vector3(DENSITY * (radius) * MathF.Sin(angle),
+                                                                     0,
+                                                                     DENSITY * (radius) * MathF.Cos(angle)));
         }
         public Actor GetActor()
         {
