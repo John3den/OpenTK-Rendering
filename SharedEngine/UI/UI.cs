@@ -3,17 +3,20 @@ using ImGuiNET;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
+using System.Text;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Engine
 {
 
     public class UI
     {
+        private byte[] N_str = new byte[128];
         private string[] LightingModes = { "point", "direct", "spot" };
         private ImGuiController _controller;
         public UI(int w, int h)
         {
-            _controller = new ImGuiController(w, h);
+            _controller = new ImGuiController(w, h); 
         }
         public void Resize(int w, int h)
         {
@@ -37,6 +40,7 @@ namespace Engine
             ImGui.Text("Time elapsed:" + elapsed.ToString() + " ms");
             ImGui.Text("Frames per second:" + (int)(1000 / elapsed));
             ImGui.SliderInt("int", ref n, 0, Scene.N, "objects");
+            ImGui.InputText("input text", N_str, 128);
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
             if (ImGui.Button("change light"))
                 scene.NextLightMode();
@@ -46,7 +50,26 @@ namespace Engine
             ImGui.End();
             _controller.Render();
             ImGuiController.CheckGLError("End of frame");
-            scene.n = n;
+            if(scene.n != n)
+            {
+                scene.n = n;
+                N_str = new byte[128];
+            }
+            else
+            {
+                string str = System.Text.Encoding.Default.GetString(N_str);
+                try
+                {
+                    if (str[0] != '\0')
+                    {
+                        int result = Int32.Parse(str);
+                        if (result <= Scene.N)
+                            scene.n = result;
+                    }
+                }
+                catch (FormatException) { }
+                catch (OverflowException) { }
+            }
         }
     }
 }
