@@ -30,6 +30,8 @@ namespace Engine
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), RESOLUTION_X / RESOLUTION_Y, MIN_RENDER_DISTANCE, MAX_RENDER_DISTANCE);
             Vector3 up = Vector3.UnitY;
             Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
+
+
             int location = GL.GetUniformLocation(ActiveShader.GetHandle(), "isLight");
             GL.Uniform1(location,0);
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "camPos");
