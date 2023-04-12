@@ -1,24 +1,18 @@
-﻿using Engine;
+using OpenTK.Windowing.Common;
+using OpenTK.Windowing.Desktop;
+using Engine;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 
-using (Simulation.Simulation game = new Simulation.Simulation(800, 600, "Simulation"))
+namespace Engine
 {
-    GL.Enable(EnableCap.DepthTest);
-    Console.WriteLine("Opening window!");
-    game.Run();
-}
-namespace Simulation
-{
-    public class Simulation : GameWindow
+    public class Application : GameWindow
     {
-        Camera camera;
         WindowManager windowManager;
         SceneManager sceneManager;
-        RenderBuffer buffer;
         Renderer renderer;
-        public Simulation(int width, int height, string title) :
+        public Application(int width, int height, string title) :
         base(GameWindowSettings.Default, new NativeWindowSettings()
         {
             Size = (width, height),
@@ -26,9 +20,8 @@ namespace Simulation
         })
         {
             renderer = new Renderer();
-            camera = new Camera();
-            sceneManager = new SceneManager(camera);
-            windowManager = new WindowManager(this, camera);
+            sceneManager = new SceneManager(renderer);
+            windowManager = new WindowManager(this, sceneManager, renderer);
         }
         protected override void OnResize(ResizeEventArgs e)
         {
@@ -54,8 +47,8 @@ namespace Simulation
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            buffer = new RenderBuffer(sceneManager.CurrentScene);
-            buffer.ChooseShader(sceneManager.CurrentScene.GetLightMode());           
+            RenderBuffer buffer = new RenderBuffer(sceneManager.CurrentScene, sceneManager.GetMaterial());
+            buffer.ChooseShader(sceneManager.CurrentScene.GetLightMode());
             renderer.RenderScene(buffer);
             windowManager.RenderUI(sceneManager, e);
             SwapBuffers();

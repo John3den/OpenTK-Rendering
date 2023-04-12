@@ -11,6 +11,7 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Buffers\EBO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Buffers\GLObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)buffers\Material.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Buffers\RenderBuffer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Buffers\VAO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Buffers\VBO.cs" />
@@ -23,6 +24,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Scene\Timer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\ImGuiController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)UI\UI.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)window\Application.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window\Input.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window\Renderer.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Window\WindowManager.cs" />

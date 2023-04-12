@@ -11,10 +11,10 @@ namespace Engine
         public UI gui;
         public Input inputController;
         private GameWindow _window;
-        public WindowManager(GameWindow window,Camera camera)
+        public WindowManager(GameWindow window,SceneManager sceneManager,Renderer rend)
         {
             _window = window;
-            inputController = new Input(camera);
+            inputController = new Input(rend._camera, sceneManager);
             gui = new UI(window.ClientSize.X, window.ClientSize.Y);
             _window.CursorState = CursorState.Grabbed;
         }

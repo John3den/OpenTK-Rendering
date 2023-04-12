@@ -9,10 +9,12 @@ namespace Engine
     {
         Vector2 _cursor;
         Camera _camera;
+        SceneManager _sceneManager;
         bool firstMove = true;
-        public Input(Camera camera)
+        public Input(Camera camera, SceneManager sceneManager)
         {
-            _camera = camera; 
+            _camera = camera;
+            _sceneManager = sceneManager;
         }
         public void GrabCursor(GameWindow window)
         {
@@ -82,6 +84,39 @@ namespace Engine
                 movementVector -= _camera.Up * _camera.Speed * time; //Down
             }
             _camera.Move(movementVector);
+            movementVector = new Vector3(0, 0, 0);
+            float LS_speed = 5.0f;
+            if (input.IsKeyDown(Keys.I))
+            {
+                movementVector += new Vector3(LS_speed, 0, 0) * time; //Forward 
+            }
+
+            if (input.IsKeyDown(Keys.K))
+            {
+                movementVector -= new Vector3(LS_speed, 0, 0) * time; //Backwards
+            }
+
+            if (input.IsKeyDown(Keys.J))
+            {
+                movementVector -= new Vector3(0, 0, LS_speed) * time; //Left
+            }
+
+            if (input.IsKeyDown(Keys.L))
+            {
+                movementVector += new Vector3(0, 0, LS_speed) * time; //Right
+            }
+
+            if (input.IsKeyDown(Keys.U))
+            {
+                movementVector += new Vector3(0, LS_speed, 0) * time; //Up 
+            }
+
+            if (input.IsKeyDown(Keys.O))
+            {
+                movementVector -= new Vector3(0, LS_speed, 0) * time; //Down
+            }
+            if(movementVector.Length!=0)
+                _sceneManager.CurrentScene._lightSource.Transform *= Matrix4.CreateTranslation(movementVector);
         }
     }
 }

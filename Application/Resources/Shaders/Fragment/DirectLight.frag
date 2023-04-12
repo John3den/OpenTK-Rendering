@@ -1,16 +1,21 @@
 #version 420 core
 out vec4 FragColor;
 
-in vec3 color;
+
+uniform float ambient;
+uniform float specularLight;
+uniform vec3 m_color;
+uniform int reflectivity;
+
 in vec3 Normal;
 in vec3 crntPos;
 
 uniform vec3 camPos;
+uniform int isLight;
 
 vec4 directLight()
 {
 	// ambient lighting
-	float ambient = 0.15f;
 
 	// diffuse lighting
 	vec3 normal = normalize(Normal);
@@ -18,18 +23,16 @@ vec4 directLight()
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 
 	// specular lighting
-	float specularLight = 0.50f;
 	vec3 viewDirection = normalize(camPos - crntPos);
 	vec3 reflectionDirection = reflect(-lightDirection, normal);
-	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), 2);
+	float specAmount = pow(max(dot(viewDirection, reflectionDirection), 0.0f), reflectivity);
 	float specular = specAmount * specularLight;
-
-	return vec4(color*(diffuse + specular + ambient),1.0f);
+	return vec4(m_color*(diffuse + specular +ambient ),1.0f);
 }
 
 void main()
 {
-	FragColor = directLight();
+	FragColor =directLight();
 }
 
 

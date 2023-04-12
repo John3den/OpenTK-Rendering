@@ -33,9 +33,13 @@ namespace Engine
         public void Render(GameWindow window, float elapsed, float globalTime, Scene scene, SceneManager manager)
         {
             int n = scene.n;
+            string[] materials = { "red metal", "jade", "red rubber","ceramic","silver","bronze"};
+            N_str = new byte[128];
             _controller.Update(window, globalTime);
             ImGui.Begin("Info");
-            ImGui.SetWindowSize(new System.Numerics.Vector2(200, 400));
+            ImGui.SetWindowSize(new System.Numerics.Vector2(300, 500));
+            ImGui.Text("Controls: w/a/s/d, space/shift");
+            ImGui.Text("Light Controls: i/j/k/l, u/o");
             ImGui.Text("Objects rendered:" + n.ToString());
             ImGui.Text("Time elapsed:" + elapsed.ToString() + " ms");
             ImGui.Text("Frames per second:" + (int)(1000 / elapsed));
@@ -44,9 +48,20 @@ namespace Engine
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
             if (ImGui.Button("change light"))
                 scene.NextLightMode();
+            ImGui.Text("Light position:");
+            ImGui.Text(scene._lightSource.Transform.ExtractTranslation().ToString());
             ImGui.Text("Scene: task " + (4 - manager.GetSceneNumber()));
             if (ImGui.Button("change scene"))
                 manager.NextScene();
+            ImGui.SliderFloat("red", ref manager.GetMaterial()._color.X, 0, 1, "r");
+            ImGui.SliderFloat("green", ref manager.GetMaterial()._color.Y, 0, 1, "g");
+            ImGui.SliderFloat("blue", ref manager.GetMaterial()._color.Z, 0, 1, "b");
+            ImGui.SliderFloat("ambient", ref manager.GetMaterial()._ambient, 0, 1, "ambient");
+            ImGui.SliderFloat("specular", ref manager.GetMaterial()._spec, 0, 5, "spe");
+            ImGui.SliderInt("reflect", ref manager.GetMaterial()._reflectivity, 0, 128, "ref");
+            ImGui.Combo("material",ref manager._material,materials,6);
+            ImGui.EndCombo();
+
             ImGui.End();
             _controller.Render();
             ImGuiController.CheckGLError("End of frame");
