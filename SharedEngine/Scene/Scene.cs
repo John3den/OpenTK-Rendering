@@ -13,15 +13,15 @@ namespace Engine
         public readonly Actor _actor;
         public readonly Actor _lightSource;
         public readonly Camera _camera;
-        public const int N = 10000;
+        public const int N = 100000;
         private int _n = 1;
-
+        private Timer _timer;
         public int n
         {
             get { return _n; }
             set { if (value >= 0) _n = value; }
         }
-        private Timer _timer;
+
         public int GetLightMode()
         {
             return _lightMode;

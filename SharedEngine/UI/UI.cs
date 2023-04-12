@@ -11,6 +11,7 @@ namespace Engine
 
     public class UI
     {
+        private const int TIMER_RESOLUTION = 1000000;
         private byte[] N_str = new byte[128];
         private string[] LightingModes = { "point", "direct", "spot" };
         private ImGuiController _controller;
@@ -41,8 +42,8 @@ namespace Engine
             ImGui.Text("Controls: w/a/s/d, space/shift");
             ImGui.Text("Light Controls: i/j/k/l, u/o");
             ImGui.Text("Objects rendered:" + n.ToString());
-            ImGui.Text("Time elapsed:" + elapsed.ToString() + " ms");
-            ImGui.Text("Frames per second:" + (int)(1000 / elapsed));
+            ImGui.Text("Time elapsed:" + (elapsed/1000).ToString() + " ms");
+            ImGui.Text("Frames per second:" + (int)(TIMER_RESOLUTION / elapsed));
             ImGui.SliderInt("int", ref n, 0, Scene.N, "objects");
             ImGui.InputText("input text", N_str, 128);
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
