@@ -15,6 +15,7 @@ namespace Engine
         public readonly Camera _camera;
         public const int N = 100000;
         private int _n = 1;
+        private const int LIGHTMODES = 3;
         private Timer _timer;
         public int n
         {
@@ -36,7 +37,7 @@ namespace Engine
         }
         public void NextLightMode()
         {
-            _lightMode = (_lightMode + 1) % 3;
+            _lightMode = (_lightMode + 1) % LIGHTMODES;
         }
         public float GetElapsedTime()
         {
