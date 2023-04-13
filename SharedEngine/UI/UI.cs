@@ -13,24 +13,44 @@ namespace Engine
     public class UI
     {
         private const int TIMER_RESOLUTION = 1000000;
-        private byte[] N_str = new byte[128];
-        int _lastFPSUpdate = 0;
+        private byte[] _N_str = new byte[128];
+        int _lastUpdate = 0;
         int _lastFPS = 0;
-        private string[] LightingModes = { "point", "direct", "spot" };
+        float _lastElapsed = 0;
+        private string[] _lightingModes = { "point", "direct", "spot" };
         private ImGuiController _controller;
         public UI(int w, int h)
         {
             _controller = new ImGuiController(w, h); 
         }
-        public int GetFPS(SceneManager manager, float elapsed)
+        private void Update(SceneManager manager)
         {
-            int thisFPSUpdate = (int)MathF.Floor(manager.GlobalTime());
-            if (thisFPSUpdate != _lastFPSUpdate)
+            _lastUpdate = (int)MathF.Floor(manager.GlobalTime());
+        }
+        private bool IsUpdateRequired(SceneManager manager)
+        {
+            int thisUpdate = (int)MathF.Floor(manager.GlobalTime());
+            if (thisUpdate != _lastUpdate)
             {
-                _lastFPSUpdate = thisFPSUpdate;
+                return true;
+            }
+            return false;
+        }
+        private float FPS(SceneManager manager, float elapsed)
+        {
+            if(IsUpdateRequired(manager))
+            {
                 _lastFPS = (int)(TIMER_RESOLUTION / elapsed);
             }
             return _lastFPS;
+        }
+        private float Elapsed(SceneManager manager, float elapsed)
+        {
+            if (IsUpdateRequired(manager))
+            {
+                _lastElapsed = elapsed/1000.0f;
+            }
+            return _lastElapsed;
         }
         public void Resize(int w, int h)
         {
@@ -48,18 +68,18 @@ namespace Engine
         {
             int n = scene.n;
             string[] materials = { "red metal", "jade", "red rubber","ceramic","silver","bronze"};
-            N_str = new byte[128];
+            _N_str = new byte[128];
             _controller.Update(window, globalTime);
             ImGui.Begin("Info");
             ImGui.SetWindowSize(new System.Numerics.Vector2(300, 500));
             ImGui.Text("Controls: w/a/s/d, space/shift");
             ImGui.Text("Light Controls: i/j/k/l, u/o");
             ImGui.Text("Objects rendered:" + n.ToString());
-            ImGui.Text("Time elapsed:" + (elapsed/1000).ToString() + " ms");
-            ImGui.Text("Frames per second:" + GetFPS(manager, elapsed).ToString());
-            ImGui.SliderInt("int", ref n, 0, Scene.N, "objects");
-            ImGui.InputText("input text", N_str, 128);
-            ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
+            ImGui.Text("Render latency:" + Elapsed(manager,elapsed).ToString() + " ms");
+            ImGui.Text("Frames per second:" + FPS(manager, elapsed).ToString());
+            ImGui.SliderInt(" ", ref n, 0, Scene.N, "objects");
+            ImGui.InputText("objects", _N_str, 128);
+            ImGui.Text("Light Mode: " + _lightingModes[scene.GetLightMode()]);
             if (ImGui.Button("change light"))
                 scene.NextLightMode();
             ImGui.Text("Light position:");
@@ -76,18 +96,18 @@ namespace Engine
             ImGui.SliderInt("reflect", ref manager.GetMaterial()._reflectivity, 0, 128, "ref");
             ImGui.Combo("material",ref manager._material,materials,6);
             ImGui.EndCombo();
-
             ImGui.End();
             _controller.Render();
             ImGuiController.CheckGLError("End of frame");
+            Update(manager);
             if(scene.n != n)
             {
                 scene.n = n;
-                N_str = new byte[128];
+                _N_str = new byte[128];
             }
             else
             {
-                string str = System.Text.Encoding.Default.GetString(N_str);
+                string str = System.Text.Encoding.Default.GetString(_N_str);
                 try
                 {
                     if (str[0] != '\0')

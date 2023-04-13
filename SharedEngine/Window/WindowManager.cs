@@ -9,40 +9,40 @@ namespace Engine
 {
     public class WindowManager
     {
-        public UI gui;
-        public Input inputController;
+        public UI _gui;
+        public Input _inputController;
         public SceneManager _sceneManager;
         private GameWindow _window;
         public WindowManager(GameWindow window,SceneManager sceneManager,Renderer rend)
         {
             _sceneManager = sceneManager;
             _window = window;
-            inputController = new Input(rend._camera);
-            gui = new UI(window.ClientSize.X, window.ClientSize.Y);
+            _inputController = new Input(rend._camera);
+            _gui = new UI(window.ClientSize.X, window.ClientSize.Y);
             _window.CursorState = CursorState.Grabbed;
         }
         public void ProcessInput(FrameEventArgs e)
         {
             ProcessKeyboard(e);
-            inputController.GrabCursor(_window);
-            inputController.MoveCamera(_window);
+            _inputController.GrabCursor(_window);
+            _inputController.MoveCamera(_window);
         }
         public void RenderUI(SceneManager sceneManager, FrameEventArgs e)
         {
-            gui.Render(_window, sceneManager.CurrentScene.GetElapsedTime(), (float)e.Time, sceneManager.CurrentScene, sceneManager);
+            _gui.Render(_window, sceneManager.CurrentScene.GetElapsedTime(), (float)e.Time, sceneManager.CurrentScene, sceneManager);
         }
         public void Resize(ResizeEventArgs e)
         {
             GL.Viewport(0, 0, e.Width, e.Height);
-            gui.Resize(_window.ClientSize.X, _window.ClientSize.Y);
+            _gui.Resize(_window.ClientSize.X, _window.ClientSize.Y);
         }
         public void MouseWheel(Vector2 offset)
         {
-            gui.MouseWheel(offset);
+            _gui.MouseWheel(offset);
         }
         public void Text(TextInputEventArgs e)
         {
-            gui.InputText(e);
+            _gui.InputText(e);
         }
         public void TimeTick(FrameEventArgs e)
         {
@@ -62,7 +62,7 @@ namespace Engine
             {
                 _window.Close();
             }
-            inputController.HandleControls(input, (float)e.Time, _sceneManager);
+            _inputController.HandleControls(input, (float)e.Time, _sceneManager);
         }
     }
 }

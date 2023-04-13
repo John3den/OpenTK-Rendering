@@ -9,7 +9,7 @@ namespace Engine
     {
         Vector2 _cursor;
         Camera _camera;
-        bool firstMove = true;
+        bool _firstMove = true;
         public Input(Camera camera)
         {
             _camera = camera;
@@ -32,10 +32,10 @@ namespace Engine
         {
             if (window.CursorState == CursorState.Grabbed)
             {
-                if (firstMove)
+                if (_firstMove)
                 {
                     _cursor = new Vector2(window.MousePosition.X, window.MousePosition.Y);
-                    firstMove = false;
+                    _firstMove = false;
                 }
                 else
                 {

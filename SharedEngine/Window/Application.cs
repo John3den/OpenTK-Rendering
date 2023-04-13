@@ -9,9 +9,9 @@ namespace Engine
 {
     public class Application : GameWindow
     {
-        WindowManager windowManager;
-        SceneManager sceneManager;
-        Renderer renderer;
+        WindowManager _windowManager;
+        SceneManager _sceneManager;
+        Renderer _renderer;
         public Application(int width, int height, string title) :
         base(GameWindowSettings.Default, new NativeWindowSettings()
         {
@@ -19,20 +19,20 @@ namespace Engine
             Title = title
         })
         {
-            renderer = new Renderer();
-            sceneManager = new SceneManager(renderer);
-            windowManager = new WindowManager(this, sceneManager, renderer);
+            _renderer = new Renderer();
+            _sceneManager = new SceneManager(_renderer);
+            _windowManager = new WindowManager(this, _sceneManager, _renderer);
         }
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
-            windowManager.Resize(e);
+            _windowManager.Resize(e);
         }
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
-            windowManager.ProcessInput(e);
-            windowManager.TimeTick(e);
+            _windowManager.ProcessInput(e);
+            _windowManager.TimeTick(e);
         }
         protected override void OnUnload()
         {
@@ -48,21 +48,21 @@ namespace Engine
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            RenderBuffer buffer = new RenderBuffer(sceneManager.CurrentScene, sceneManager.GetMaterial());
-            buffer.ChooseShader(sceneManager.CurrentScene.GetLightMode());
-            renderer.RenderScene(buffer);
-            windowManager.RenderUI(sceneManager, e);
+            RenderBuffer buffer = new RenderBuffer(_sceneManager.CurrentScene, _sceneManager.GetMaterial());
+            buffer.ChooseShader(_sceneManager.CurrentScene.GetLightMode());
+            _renderer.RenderScene(buffer);
+            _windowManager.RenderUI(_sceneManager, e);
             SwapBuffers();
         }
         protected override void OnTextInput(TextInputEventArgs e)
         {
             base.OnTextInput(e);
-            windowManager.Text(e);
+            _windowManager.Text(e);
         }
         protected override void OnMouseWheel(MouseWheelEventArgs e)
         {
             base.OnMouseWheel(e);
-            windowManager.MouseWheel(e.Offset);
+            _windowManager.MouseWheel(e.Offset);
         }
     }
 
