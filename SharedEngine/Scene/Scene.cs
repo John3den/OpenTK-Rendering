@@ -1,5 +1,6 @@
 ﻿
 using OpenTK.Mathematics;
+using System.Reflection;
 
 namespace Engine
 {
@@ -17,6 +18,15 @@ namespace Engine
         private int _n = 1;
         private const int LIGHTMODES = 3;
         private Timer _timer;
+        private float _totalTime = 0;
+        public float CurrentTime()
+        {
+            return _totalTime;
+        }
+        public void UpdateTotalTime(float delta)
+        {
+            _totalTime += delta;
+        }
         public int n
         {
             get { return _n; }

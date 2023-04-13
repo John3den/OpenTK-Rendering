@@ -9,6 +9,8 @@ out vec4 clr;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 rotation;
+
 uniform vec3 camPos;
 uniform vec3 lightPos;
 
@@ -19,11 +21,11 @@ uniform int reflectivity;
 vec4 spotLight()
 {	
 	vec3 crntPos = vec3(vec4(aPos, 1.0) * model);
-
+	vec3 Normal = vec3(vec4(aNormal,1.0f)*rotation);
 	float outerCone = 0.90f;
 	float innerCone = 0.95f;
 
-	vec3 normal = normalize(aNormal);
+	vec3 normal = normalize(Normal);
 	vec3 lightDirection = normalize(lightPos - crntPos);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 

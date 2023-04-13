@@ -10,6 +10,17 @@ namespace Engine
         private int _sceneNumber;
         public int _material = 1;
         private const int MAXSCENES = 2;
+        public bool _isRotating;
+        private float _globalTime;
+        public void GlobalTimeTick(float delta)
+        {
+            _globalTime += delta;
+        }
+        public float GlobalTime()
+        {
+
+            return _globalTime;
+        }
         public void NextScene()
         {
             _sceneNumber = (_sceneNumber + 1) % MAXSCENES;

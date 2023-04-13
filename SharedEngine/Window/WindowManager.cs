@@ -1,4 +1,5 @@
-﻿using OpenTK.Graphics.OpenGL4;
+﻿using ImGuiNET;
+using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -10,11 +11,13 @@ namespace Engine
     {
         public UI gui;
         public Input inputController;
+        public SceneManager _sceneManager;
         private GameWindow _window;
         public WindowManager(GameWindow window,SceneManager sceneManager,Renderer rend)
         {
+            _sceneManager = sceneManager;
             _window = window;
-            inputController = new Input(rend._camera, sceneManager);
+            inputController = new Input(rend._camera);
             gui = new UI(window.ClientSize.X, window.ClientSize.Y);
             _window.CursorState = CursorState.Grabbed;
         }
@@ -41,6 +44,17 @@ namespace Engine
         {
             gui.InputText(e);
         }
+        public void TimeTick(FrameEventArgs e)
+        {
+            if(_sceneManager != null)
+            {
+                if (_sceneManager._isRotating)
+                {
+                    _sceneManager.CurrentScene.UpdateTotalTime((float)e.Time);
+                }
+                _sceneManager.GlobalTimeTick((float)e.Time);
+            }
+        }
         public void ProcessKeyboard(FrameEventArgs e)
         {
             KeyboardState input = _window.KeyboardState;
@@ -48,7 +62,7 @@ namespace Engine
             {
                 _window.Close();
             }
-            inputController.HandleControls(input, (float)e.Time);
+            inputController.HandleControls(input, (float)e.Time, _sceneManager);
         }
     }
 }

@@ -9,12 +9,10 @@ namespace Engine
     {
         Vector2 _cursor;
         Camera _camera;
-        SceneManager _sceneManager;
         bool firstMove = true;
-        public Input(Camera camera, SceneManager sceneManager)
+        public Input(Camera camera)
         {
             _camera = camera;
-            _sceneManager = sceneManager;
         }
         public void GrabCursor(GameWindow window)
         {
@@ -51,8 +49,9 @@ namespace Engine
                 _camera.UpdateDirection();
             }
         }
-        public void HandleControls(KeyboardState input, float time)
+        public void HandleControls(KeyboardState input, float time, SceneManager _sceneManager)
         {
+
             Vector3 movementVector = new Vector3(0, 0, 0);
             if (input.IsKeyDown(Keys.W))
             {
@@ -115,8 +114,7 @@ namespace Engine
             {
                 movementVector -= new Vector3(0, LS_speed, 0) * time; //Down
             }
-            if(movementVector.Length!=0)
-                _sceneManager.CurrentScene._lightSource.Transform *= Matrix4.CreateTranslation(movementVector);
+            _sceneManager.CurrentScene._lightSource.Transform *= Matrix4.CreateTranslation(movementVector);
         }
     }
 }

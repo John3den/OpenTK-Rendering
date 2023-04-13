@@ -9,6 +9,8 @@ out vec4 clr;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 rotation;
+
 uniform vec3 camPos;
 uniform vec3 lightPos;
 
@@ -19,7 +21,7 @@ uniform int reflectivity;
 vec4 pointLight()
 {	
 	vec3 crntPos = vec3(vec4(aPos, 1.0) * model);
-
+	vec3 Normal = vec3(vec4(aNormal,1.0f)*rotation);
 	vec3 lightVec = lightPos - crntPos;
 
 	float dist = length(lightVec);
@@ -29,7 +31,7 @@ vec4 pointLight()
 
 
 
-	vec3 normal = normalize(aNormal);
+	vec3 normal = normalize(Normal);
 	vec3 lightDirection = normalize(lightVec);
 	float diffuse = max(dot(normal, lightDirection), 0.0f);
 

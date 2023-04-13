@@ -1,5 +1,6 @@
 ﻿using Dear_ImGui_Sample;
 using ImGuiNET;
+using OpenTK.Graphics.ES11;
 using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -13,11 +14,23 @@ namespace Engine
     {
         private const int TIMER_RESOLUTION = 1000000;
         private byte[] N_str = new byte[128];
+        int _lastFPSUpdate = 0;
+        int _lastFPS = 0;
         private string[] LightingModes = { "point", "direct", "spot" };
         private ImGuiController _controller;
         public UI(int w, int h)
         {
             _controller = new ImGuiController(w, h); 
+        }
+        public int GetFPS(SceneManager manager, float elapsed)
+        {
+            int thisFPSUpdate = (int)MathF.Floor(manager.GlobalTime());
+            if (thisFPSUpdate != _lastFPSUpdate)
+            {
+                _lastFPSUpdate = thisFPSUpdate;
+                _lastFPS = (int)(TIMER_RESOLUTION / elapsed);
+            }
+            return _lastFPS;
         }
         public void Resize(int w, int h)
         {
@@ -43,7 +56,7 @@ namespace Engine
             ImGui.Text("Light Controls: i/j/k/l, u/o");
             ImGui.Text("Objects rendered:" + n.ToString());
             ImGui.Text("Time elapsed:" + (elapsed/1000).ToString() + " ms");
-            ImGui.Text("Frames per second:" + (int)(TIMER_RESOLUTION / elapsed));
+            ImGui.Text("Frames per second:" + GetFPS(manager, elapsed).ToString());
             ImGui.SliderInt("int", ref n, 0, Scene.N, "objects");
             ImGui.InputText("input text", N_str, 128);
             ImGui.Text("Light Mode: " + LightingModes[scene.GetLightMode()]);
@@ -54,6 +67,7 @@ namespace Engine
             ImGui.Text("Scene: task " + (4 - manager.GetSceneNumber()));
             if (ImGui.Button("change scene"))
                 manager.NextScene();
+            ImGui.Checkbox("Rotate", ref manager._isRotating);
             ImGui.SliderFloat("red", ref manager.GetMaterial()._color.X, 0, 1, "r");
             ImGui.SliderFloat("green", ref manager.GetMaterial()._color.Y, 0, 1, "g");
             ImGui.SliderFloat("blue", ref manager.GetMaterial()._color.Z, 0, 1, "b");

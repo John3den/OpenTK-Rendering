@@ -17,6 +17,8 @@ out int refl;
 uniform mat4 model;
 uniform mat4 view;
 uniform mat4 projection;
+uniform mat4 rotation;
+
 uniform float ambient;
 uniform float specularLight;
 uniform vec3 m_color;
@@ -29,5 +31,5 @@ void main()
 	spe = specularLight;
 	crntPos = vec3(vec4(aPos, 1.0) * model);
 	gl_Position =  vec4(aPos, 1.0) * model * view * projection;
-	Normal = vec3(vec4(aNormal, 1.0f));
+	Normal = vec3(vec4(aNormal, 1.0f)* rotation);
 }

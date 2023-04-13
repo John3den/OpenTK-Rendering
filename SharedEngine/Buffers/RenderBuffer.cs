@@ -17,7 +17,7 @@ namespace Engine
         private Material _currentMaterial;
         private int _maxState = 1;
         private int _state = 0;
-        private const float DENSITY = 0.03f;
+        private const float DENSITY = 0.01f;
         private const float MAX_RENDER_DISTANCE = 1000.0f;
         private const float MIN_RENDER_DISTANCE = 0.1f;
         private const int RESOLUTION_X = 800;
@@ -30,7 +30,7 @@ namespace Engine
             Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), RESOLUTION_X / RESOLUTION_Y, MIN_RENDER_DISTANCE, MAX_RENDER_DISTANCE);
             Vector3 up = Vector3.UnitY;
             Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
-
+            Matrix4 rotation = Matrix4.CreateRotationY(_scene.CurrentTime());
 
             int location = GL.GetUniformLocation(ActiveShader.GetHandle(), "isLight");
             GL.Uniform1(location,0);
@@ -44,6 +44,8 @@ namespace Engine
             GL.UniformMatrix4(location, true, ref view);
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "projection");
             GL.UniformMatrix4(location, true, ref projection);
+            location = GL.GetUniformLocation(ActiveShader.GetHandle(), "rotation");
+            GL.UniformMatrix4(location, true, ref rotation);
             //material
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "specularLight");
             GL.Uniform1(location, _currentMaterial._spec);
@@ -89,7 +91,7 @@ namespace Engine
             _state++;
             float radius = MathF.Floor(_state * 10 / 10);
             float angle = (float)_state / 10;
-            _actor.Transform = Matrix4.CreateTranslation(new Vector3(DENSITY * (radius) * MathF.Sin(angle),
+            _actor.Transform =Matrix4.CreateRotationY(_scene.CurrentTime()) * Matrix4.CreateTranslation(new Vector3(DENSITY * (radius) * MathF.Sin(angle),
                                                                      0,
                                                                      DENSITY * (radius) * MathF.Cos(angle)));
         }

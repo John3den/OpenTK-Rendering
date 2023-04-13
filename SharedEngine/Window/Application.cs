@@ -32,6 +32,7 @@ namespace Engine
         {
             base.OnUpdateFrame(e);
             windowManager.ProcessInput(e);
+            windowManager.TimeTick(e);
         }
         protected override void OnUnload()
         {
@@ -41,7 +42,7 @@ namespace Engine
         protected override void OnLoad()
         {
             base.OnLoad();
-            GL.ClearColor(0.0f, 0.3f, 0.0f, 1.0f);
+            GL.ClearColor(0.04f, 0.04f, 0.04f, 1.0f);
         }
         protected override void OnRenderFrame(FrameEventArgs e)
         {
