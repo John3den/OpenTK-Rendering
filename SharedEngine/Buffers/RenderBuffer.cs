@@ -17,7 +17,7 @@ namespace Engine
         private Material _currentMaterial;
         private int _maxState = 1;
         private int _state = 0;
-        private const float DENSITY = 0.01f;
+        private const float DENSITY = 0.4f;
         private const float MAX_RENDER_DISTANCE = 1000.0f;
         private const float MIN_RENDER_DISTANCE = 0.1f;
         private const int RESOLUTION_X = 800;
