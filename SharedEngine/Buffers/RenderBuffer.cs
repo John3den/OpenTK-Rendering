@@ -20,14 +20,14 @@ namespace Engine
         private const float DENSITY = 0.4f;
         private const float MAX_RENDER_DISTANCE = 1000.0f;
         private const float MIN_RENDER_DISTANCE = 0.1f;
-        private const int RESOLUTION_X = 800;
-        private const int RESOLUTION_Y = 600;
+        private int _resX = 800;
+        private int _resY= 600;
         public Shader ActiveShader { get; set; }
         
         public void SetUniforms(Camera camera)
         {
             Matrix4 model = Matrix4.CreateTranslation(new Vector3(0, 0, 0));
-            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), RESOLUTION_X / RESOLUTION_Y, MIN_RENDER_DISTANCE, MAX_RENDER_DISTANCE);
+            Matrix4 projection = Matrix4.CreatePerspectiveFieldOfView(MathHelper.DegreesToRadians(45.0f), _resX / _resY, MIN_RENDER_DISTANCE, MAX_RENDER_DISTANCE);
             Vector3 up = Vector3.UnitY;
             Matrix4 view = Matrix4.LookAt(camera.GetPosition(), camera.GetPosition() + camera.Front, up);
             Matrix4 rotation = Matrix4.CreateRotationY(_scene.CurrentTime());
@@ -56,8 +56,11 @@ namespace Engine
             location = GL.GetUniformLocation(ActiveShader.GetHandle(), "reflectivity");
             GL.Uniform1(location, _currentMaterial._reflectivity);
         }
-        public RenderBuffer(Scene scene,Material mat)
+        public RenderBuffer(Scene scene,Material mat, Vector2i resolution)
         {
+            _resX = resolution.X;
+            _resY = resolution.Y;
+            Console.WriteLine(resolution.ToString());
             _currentMaterial = mat;
             _scene = scene;
             _lightSource = scene._lightSource;

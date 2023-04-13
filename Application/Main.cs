@@ -7,7 +7,7 @@ class Programm
 {
     static void Main(string[] args)
     {
-        Application app = new Application(1200, 900, "Simulation");
+        Application app = new Application(800, 600, "Simulation");
         GL.Enable(EnableCap.DepthTest);
         Console.WriteLine("Opening window!");
         app.Run();

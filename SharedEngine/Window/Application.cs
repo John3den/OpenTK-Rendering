@@ -48,7 +48,7 @@ namespace Engine
         {
             base.OnRenderFrame(e);
             GL.Clear(ClearBufferMask.ColorBufferBit | ClearBufferMask.DepthBufferBit);
-            RenderBuffer buffer = new RenderBuffer(_sceneManager.CurrentScene, _sceneManager.GetMaterial());
+            RenderBuffer buffer = new RenderBuffer(_sceneManager.CurrentScene, _sceneManager.GetMaterial(), ClientSize);
             buffer.ChooseShader(_sceneManager.CurrentScene.GetLightMode());
             _renderer.RenderScene(buffer);
             _windowManager.RenderUI(_sceneManager, e);
