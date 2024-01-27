@@ -1,3 +1,4 @@
+A small demo of rendering objects with openTK.
 Управление:
 wasd - перемещение в плоскости
 shift/space - вверх/вниз
