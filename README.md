@@ -2,4 +2,4 @@
 wasd - перемещение в плоскости
 shift/space - вверх/вниз
 ПКМ - освободить курсор
-[]!(https://media2.giphy.com/media/IXtt9NAdGoA4JcFcDn/giphy.gif)
+![]([https://media2.giphy.com/media/IXtt9NAdGoA4JcFcDn/giphy.gif](https://media2.giphy.com/media/IXtt9NAdGoA4JcFcDn/giphy.gif)https://media2.giphy.com/media/IXtt9NAdGoA4JcFcDn/giphy.gif)
